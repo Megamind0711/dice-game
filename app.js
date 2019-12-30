@@ -1,3 +1,7 @@
+// Тоглоомын бүх газарт ашиглагдах глобаль хувьсагчдыг энд зарла
+// Тоглоом дууссаныг хадгалах төлөвийн хувьсагчийг энд бичье
+var isNewgame;
+
 var activatePlayer = 0;
 
 var scores = [0, 0];
@@ -9,6 +13,7 @@ var diceDom = document.querySelector(".dice");
 initGame();
 // тоглоомын шинээр эхлүүлэхэд бэлтгэнэ.
 function initGame() {
+  isNewgame = true;
   //Тоглогчийн ээлжийг хадгалах хувьсагч, нэгдүгээр тоглогчыг 0, хоёрдугаар тоглогчийг 1 гэе
   activatePlayer = 0;
   // Тоглогчын цуглуулсан оноог хадгалах хувьсагч
@@ -37,47 +42,56 @@ function initGame() {
 
 // Шоог шидэх эвент листенер
 document.querySelector(".btn-roll").addEventListener("click", function() {
-  // 1-6 хүртэл санамсаргүй нэг тоо гаргаж авна.
-  var diceNumber = Math.floor(Math.random() * 6) + 1;
-  // шооны зургыг вэб дээр гаргаж ирнэ.
-  diceDom.style.display = " block ";
-  // буусан санамсаргүй тоонд харгалзах зургийг вэб дээр гаргаж ирнэ.
-  diceDom.src = "dice-" + diceNumber + ".png";
+  if (isNewgame) {
+    // 1-6 хүртэл санамсаргүй нэг тоо гаргаж авна.
+    var diceNumber = Math.floor(Math.random() * 6) + 1;
+    // шооны зургыг вэб дээр гаргаж ирнэ.
+    diceDom.style.display = " block ";
+    // буусан санамсаргүй тоонд харгалзах зургийг вэб дээр гаргаж ирнэ.
+    diceDom.src = "dice-" + diceNumber + ".png";
 
-  // Буусан тоглогчын оноо 1 ээс ялгаатай бол идэвхтэй тоглогчийн ээлжийн оноог нэмэгдүүнэ.
-  if (diceNumber !== 1) {
-    // 1 ээс ялгаатай буулаа.Буусан тоог тоглогчмд нэмж өгнө.
-    roundScore = roundScore + diceNumber;
-    document.getElementById(
-      "current-" + activatePlayer
-    ).textContent = roundScore;
+    // Буусан тоглогчын оноо 1 ээс ялгаатай бол идэвхтэй тоглогчийн ээлжийн оноог нэмэгдүүнэ.
+    if (diceNumber !== 1) {
+      // 1 ээс ялгаатай буулаа.Буусан тоог тоглогчмд нэмж өгнө.
+      roundScore = roundScore + diceNumber;
+      document.getElementById(
+        "current-" + activatePlayer
+      ).textContent = roundScore;
+    } else {
+      // 1 ээс ялгаатай буусан тул тоглогчийн ээлжийг энэ хэсгт сольж өгнө.
+      switchToNextPlayer();
+    }
   } else {
-    // 1 ээс ялгаатай буусан тул тоглогчийн ээлжийг энэ хэсгт сольж өгнө.
-    switchToNextPlayer();
+    alert("Game is over click to New game ;");
   }
 });
 
 // HOLD товчны эвент листенер
 document.querySelector(".btn-hold").addEventListener("click", function() {
-  // Уг тоглогчийн ээлжийн оноог глобаль оноон дээр нэмнэ.
-  scores[activatePlayer] = scores[activatePlayer] + roundScore;
-  // Дэлгэц дээр оноог өөрчилнө.
-  document.getElementById("score-" + activatePlayer).textContent =
-    scores[activatePlayer];
-  // Уг тоглогчын хожсон эсэхийг шалгах (оноо нь 100 аас их буюу тэнцүүг шалгах)
-  if (scores[activatePlayer] >= 10) {
-    // Winner ийг гаргана.
-    document.getElementById("name-" + activatePlayer).textContent =
-      "WINNER !!!";
-    document
-      .querySelector(".player-" + activatePlayer + "-panel")
-      .classList.add("winner");
-    document
-      .querySelector(".player-" + activatePlayer + "-panel")
-      .classList.remove("active");
+  if (isNewgame) {
+    // Уг тоглогчийн ээлжийн оноог глобаль оноон дээр нэмнэ.
+    scores[activatePlayer] = scores[activatePlayer] + roundScore;
+    // Дэлгэц дээр оноог өөрчилнө.
+    document.getElementById("score-" + activatePlayer).textContent =
+      scores[activatePlayer];
+    // Уг тоглогчын хожсон эсэхийг шалгах (оноо нь 100 аас их буюу тэнцүүг шалгах)
+    if (scores[activatePlayer] >= 10) {
+      isNewgame = false;
+      // Winner ийг гаргана.
+      document.getElementById("name-" + activatePlayer).textContent =
+        "WINNER !!!";
+      document
+        .querySelector(".player-" + activatePlayer + "-panel")
+        .classList.add("winner");
+      document
+        .querySelector(".player-" + activatePlayer + "-panel")
+        .classList.remove("active");
+    } else {
+      // Тоглогчын ээлжийг солино.
+      switchToNextPlayer();
+    }
   } else {
-    // Тоглогчын ээлжийг солино.
-    switchToNextPlayer();
+    alert("Game is over click to New game ;");
   }
 });
 
